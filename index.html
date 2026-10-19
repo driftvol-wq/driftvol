@@ -21,9 +21,9 @@
   .product .b { opacity:0; }
   .product:hover .b, .product.flip .b { opacity:1; }
   .product:hover .a, .product.flip .a { opacity:0; }
-  form { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; width:min(520px,100%); }
-  .field { flex:1 1 240px; padding:14px 16px; font:inherit; font-size:15px; background:var(--bg); color:var(--fg); border:1px solid var(--line); border-radius:6px; }
-  button { padding:14px 22px; font:inherit; font-size:15px; text-transform:uppercase; letter-spacing:.03em; background:var(--fg); color:var(--bg); border:0; border-radius:6px; cursor:pointer; }
+  form { display:flex; flex-direction:column; align-items:center; gap:10px; width:min(520px,100%); margin:0 auto; }
+  .field { width:100%; max-width:360px; text-align:center; padding:14px 16px; font:inherit; font-size:15px; background:var(--bg); color:var(--fg); border:1px solid var(--line); border-radius:6px; }
+  button { width:100%; max-width:360px; padding:14px 22px; font:inherit; font-size:15px; text-transform:uppercase; letter-spacing:.03em; background:var(--fg); color:var(--bg); border:0; border-radius:6px; cursor:pointer; }
   button:disabled { opacity:.5; cursor:wait; }
   .msg { margin-top:16px; font-size:15px; min-height:1.4em; }
   .cta { font-size:16px; margin:0 0 16px; text-transform:uppercase; letter-spacing:.03em; }
