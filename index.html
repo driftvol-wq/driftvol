@@ -61,7 +61,7 @@ const CONFIG = {
   chip:     "",                         // grey label (set "" to hide)
   imageMain:  "images/scarf-back.webp",        // shown by default
   imageHover: "images/scarf-design.webp",      // shown on hover
-  notifyEmail: "Driftvol@gmail.com"            // where sign-ups are sent
+  notifyEmail: "c2b2fdf4c8b9d693889c31f9028d5a80"  // FormSubmit alias for Driftvol@gmail.com
 };
 /* ============================= */
 
@@ -97,10 +97,12 @@ document.getElementById('form').addEventListener('submit', async (e) => {
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
       body: JSON.stringify({ email, _subject: "New pre-order sign-up: " + email, _captcha: "false" })
     });
-    if (!res.ok) throw new Error("bad response");
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || String(data.success) !== "true") throw new Error(data.message || "bad response");
     document.getElementById('signup').hidden = true;
     document.getElementById('thanks').hidden = false;
   } catch (err) {
+    console.error(err);
     msg.textContent = "Something went wrong. Please try again.";
     btn.disabled = false;
   }
