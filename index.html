@@ -22,7 +22,7 @@
   .product:hover .b, .product.flip .b { opacity:1; }
   .product:hover .a, .product.flip .a { opacity:0; }
   form { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; width:min(520px,100%); }
-  input[type=email] { flex:1 1 240px; padding:14px 16px; font:inherit; font-size:15px; background:var(--bg); color:var(--fg); border:1px solid var(--line); border-radius:6px; }
+  .field { flex:1 1 240px; padding:14px 16px; font:inherit; font-size:15px; background:var(--bg); color:var(--fg); border:1px solid var(--line); border-radius:6px; }
   button { padding:14px 22px; font:inherit; font-size:15px; text-transform:uppercase; letter-spacing:.03em; background:var(--fg); color:var(--bg); border:0; border-radius:6px; cursor:pointer; }
   button:disabled { opacity:.5; cursor:wait; }
   .msg { margin-top:16px; font-size:15px; min-height:1.4em; }
@@ -46,7 +46,8 @@
   <p class="cta">Sign up for pre-order!</p>
   <form id="form">
     <input class="hp" type="text" name="_honey" tabindex="-1" autocomplete="off">
-    <input type="email" id="email" name="email" placeholder="your@email.com" required>
+    <input class="field" type="text" id="name" name="name" placeholder="Your name" autocomplete="name" required>
+    <input class="field" type="email" id="email" name="email" placeholder="your@email.com" autocomplete="email" required>
     <button type="submit" id="btn">Sign up for pre-order!</button>
   </form>
   <div class="msg" id="msg"></div>
@@ -88,6 +89,7 @@ product.addEventListener('click', () => product.classList.toggle('flip'));
 document.getElementById('form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const btn = document.getElementById('btn'), msg = document.getElementById('msg');
+  const name = document.getElementById('name').value.trim();
   const email = document.getElementById('email').value.trim();
   if (e.target._honey.value) return; // spam trap
   btn.disabled = true; msg.textContent = "";
@@ -95,7 +97,7 @@ document.getElementById('form').addEventListener('submit', async (e) => {
     const res = await fetch("https://formsubmit.co/ajax/" + CONFIG.notifyEmail, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify({ email, _subject: "New pre-order sign-up: " + email, _captcha: "false" })
+      body: JSON.stringify({ name, email, _subject: "New pre-order sign-up: " + name + " (" + email + ")", _captcha: "false" })
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || String(data.success) !== "true") throw new Error(data.message || "bad response");
