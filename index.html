@@ -1,0 +1,110 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pre-order</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#fff; --fg:#111; --chip:#f2f2f2; --line:#d8d8d8; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#111; --fg:#f5f5f5; --chip:#222; --line:#444; } }
+  * { box-sizing: border-box; }
+  html, body { margin:0; background:var(--bg); color:var(--fg); }
+  body { font-family:'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; text-align:center; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:48px 20px 56px; }
+  h1 { font-weight:400; font-size:clamp(28px,5vw,44px); letter-spacing:.04em; margin:0 0 20px; text-transform:uppercase; }
+  .logo { display:block; width:min(440px,85vw); height:auto; margin:0 auto; }
+  @media (prefers-color-scheme: dark) { .logo { filter:invert(1); } }
+  .sub { font-size:clamp(14px,2vw,18px); margin:0 0 28px; }
+  .chip { display:inline-block; background:var(--chip); padding:14px 24px; border-radius:6px; font-size:16px; text-transform:uppercase; letter-spacing:.03em; margin-bottom:36px; }
+  .product { width:min(520px,100%); aspect-ratio:1/1; position:relative; cursor:pointer; margin-bottom:40px; }
+  .product img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; transition:opacity .25s ease; }
+  .product .b { opacity:0; }
+  .product:hover .b, .product.flip .b { opacity:1; }
+  .product:hover .a, .product.flip .a { opacity:0; }
+  form { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; width:min(520px,100%); }
+  input[type=email] { flex:1 1 240px; padding:14px 16px; font:inherit; font-size:15px; background:var(--bg); color:var(--fg); border:1px solid var(--line); border-radius:6px; }
+  button { padding:14px 22px; font:inherit; font-size:15px; text-transform:uppercase; letter-spacing:.03em; background:var(--fg); color:var(--bg); border:0; border-radius:6px; cursor:pointer; }
+  button:disabled { opacity:.5; cursor:wait; }
+  .msg { margin-top:16px; font-size:15px; min-height:1.4em; }
+  .cta { font-size:16px; margin:0 0 16px; text-transform:uppercase; letter-spacing:.03em; }
+  .thanks { font-size:clamp(20px,3vw,28px); text-transform:uppercase; }
+  .hp { position:absolute; left:-9999px; }
+</style>
+</head>
+<body>
+
+<h1 id="title"><img class="logo" src="images/driftvol-logo.png" alt="Driftvol" width="987" height="120"></h1>
+<p class="sub" id="subtitle"></p>
+<div class="chip" id="chip"></div>
+
+<div class="product" id="product">
+  <img class="a" id="imgA" alt="Driftvol 2026 scarf, back">
+  <img class="b" id="imgB" alt="Driftvol 2026 scarf design, front and back">
+</div>
+
+<div id="signup">
+  <p class="cta">Sign up for pre-order!</p>
+  <form id="form">
+    <input class="hp" type="text" name="_honey" tabindex="-1" autocomplete="off">
+    <input type="email" id="email" name="email" placeholder="your@email.com" required>
+    <button type="submit" id="btn">Sign up for pre-order!</button>
+  </form>
+  <div class="msg" id="msg"></div>
+</div>
+<div class="thanks" id="thanks" hidden>Thank you for signing up!</div>
+
+<script>
+/* ===== EDIT THIS SECTION ===== */
+const CONFIG = {
+  title:    "Driftvol",                 // logo alt text
+  subtitle: "Sign-up to pre-order the new Driftvol 2026 scarf.",   // small line under it
+  chip:     "",                         // grey label (set "" to hide)
+  imageMain:  "images/scarf-back.webp",        // shown by default
+  imageHover: "images/scarf-design.webp",      // shown on hover
+  notifyEmail: "Driftvol@gmail.com"            // where sign-ups are sent
+};
+/* ============================= */
+
+// Placeholder images so the page works before you add your own
+const ph = (c, t) => "data:image/svg+xml;utf8," + encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'><rect width='400' height='400' fill='${c}'/><text x='200' y='210' font-family='monospace' font-size='22' fill='#fff' text-anchor='middle'>${t}</text></svg>`);
+
+document.getElementById('title').querySelector('img').alt = CONFIG.title;
+document.getElementById('subtitle').textContent = CONFIG.subtitle;
+const chip = document.getElementById('chip');
+CONFIG.chip ? chip.textContent = CONFIG.chip : chip.remove();
+
+[['imgA', CONFIG.imageMain, ph('#4aa8e0','Picture 1')], ['imgB', CONFIG.imageHover, ph('#111','Picture 2')]].forEach(([id, src, fb]) => {
+  const el = document.getElementById(id);
+  el.onerror = () => { el.onerror = null; el.src = fb; };
+  el.src = src;
+});
+
+// Tap to flip on phones
+const product = document.getElementById('product');
+product.addEventListener('click', () => product.classList.toggle('flip'));
+
+// Email sign-up -> sent to your inbox via FormSubmit
+document.getElementById('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('btn'), msg = document.getElementById('msg');
+  const email = document.getElementById('email').value.trim();
+  if (e.target._honey.value) return; // spam trap
+  btn.disabled = true; msg.textContent = "";
+  try {
+    const res = await fetch("https://formsubmit.co/ajax/" + CONFIG.notifyEmail, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({ email, _subject: "New pre-order sign-up: " + email, _captcha: "false" })
+    });
+    if (!res.ok) throw new Error("bad response");
+    document.getElementById('signup').hidden = true;
+    document.getElementById('thanks').hidden = false;
+  } catch (err) {
+    msg.textContent = "Something went wrong. Please try again.";
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
