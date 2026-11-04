@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -62,7 +62,7 @@ const CONFIG = {
   chip:     "",                         // grey label (set "" to hide)
   imageMain:  "images/scarf-back.webp",        // shown by default
   imageHover: "images/scarf-design.webp",      // shown on hover
-  notifyEmail: "c2b2fdf4c8b9d693889c31f9028d5a80"  // FormSubmit alias for Driftvol@gmail.com
+  accessKey: "PASTE-YOUR-WEB3FORMS-KEY-HERE"   // Web3Forms key for Driftvol@gmail.com
 };
 /* ============================= */
 
@@ -85,7 +85,7 @@ CONFIG.chip ? chip.textContent = CONFIG.chip : chip.remove();
 const product = document.getElementById('product');
 product.addEventListener('click', () => product.classList.toggle('flip'));
 
-// Email sign-up -> sent to your inbox via FormSubmit
+// Email sign-up -> sent to your inbox via Web3Forms
 document.getElementById('form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const btn = document.getElementById('btn'), msg = document.getElementById('msg');
@@ -94,13 +94,18 @@ document.getElementById('form').addEventListener('submit', async (e) => {
   if (e.target._honey.value) return; // spam trap
   btn.disabled = true; msg.textContent = "";
   try {
-    const res = await fetch("https://formsubmit.co/ajax/" + CONFIG.notifyEmail, {
+    const res = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify({ name, email, _subject: "New pre-order sign-up: " + name + " (" + email + ")", _captcha: "false" })
+      body: JSON.stringify({
+        access_key: CONFIG.accessKey,
+        name,
+        email,
+        subject: "New pre-order sign-up: " + name + " (" + email + ")"
+      })
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok || String(data.success) !== "true") throw new Error(data.message || "bad response");
+    if (!res.ok || !data.success) throw new Error(data.message || "bad response");
     document.getElementById('signup').hidden = true;
     document.getElementById('thanks').hidden = false;
   } catch (err) {
