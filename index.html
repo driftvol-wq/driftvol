@@ -43,12 +43,12 @@
 </div>
 
 <div id="signup">
-  <p class="cta">Sign up for pre-order!</p>
+  <p class="cta">Sign up to order!</p>
   <form id="form">
     <input class="hp" type="text" name="_honey" tabindex="-1" autocomplete="off">
     <input class="field" type="text" id="name" name="name" placeholder="Your name" autocomplete="name" required>
     <input class="field" type="email" id="email" name="email" placeholder="your@email.com" autocomplete="email" required>
-    <button type="submit" id="btn">Sign up for pre-order!</button>
+    <button type="submit" id="btn">Sign up to order!</button>
   </form>
   <div class="msg" id="msg"></div>
 </div>
@@ -58,7 +58,7 @@
 /* ===== EDIT THIS SECTION ===== */
 const CONFIG = {
   title:    "Driftvol",                 // logo alt text
-  subtitle: "Sign-up to pre-order the new Driftvol 2026 scarf. [will cost €25]",   // small line under it
+  subtitle: "Sign-up to order the new Driftvol 2026 scarf. [will cost €30]",   // small line under it
   chip:     "",                         // grey label (set "" to hide)
   imageMain:  "images/scarf-back.webp",        // shown by default
   imageHover: "images/scarf-design.webp",      // shown on hover
@@ -101,7 +101,7 @@ document.getElementById('form').addEventListener('submit', async (e) => {
         access_key: CONFIG.accessKey,
         name,
         email,
-        subject: "New pre-order sign-up: " + name + " (" + email + ")"
+        subject: "order sign-up: " + name + " (" + email + ")"
       })
     });
     const data = await res.json().catch(() => ({}));
